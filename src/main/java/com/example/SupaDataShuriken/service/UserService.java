@@ -1,79 +1,64 @@
 package com.example.SupaDataShuriken.service;
 
-import com.example.SupaDataShuriken.dto.CompanyDto;
+
 import com.example.SupaDataShuriken.dto.UserDtoRequest;
 import com.example.SupaDataShuriken.dto.UserDtoResponse;
-import com.example.SupaDataShuriken.entity.CompanyEntity;
 import com.example.SupaDataShuriken.entity.UserEntity;
+import com.example.SupaDataShuriken.exception.ResourceNotFoundException;
 import com.example.SupaDataShuriken.repository.UserRepo;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @Builder
 public class UserService {
     @Autowired
     private UserRepo userRepository;
-    public UserEntity saveUser(UserDtoRequest user) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(user.getId());
-        userEntity.setUserName(user.getUserName());
-        userEntity.setProfilePictureUrl(user.getProfilePictureUrl());
-        userEntity.setAboutMe(user.getAboutMe());
-        List<CompanyEntity> companyEntities = user.getCompanies().stream()
-                .map(this::convertToCompanyEntity)
-                .collect(Collectors.toList());
-        userEntity.setCompanies(companyEntities);
-        userEntity.setConnections(user.getConnections());
-        userEntity.setEmail(user.getEmail());
-        userEntity.setPhoneNumber(user.getPhoneNumber());
-
-         userRepository.save(userEntity);
-         return userEntity;
 
 
-    }
-    private CompanyEntity convertToCompanyEntity(CompanyDto companyDto) {
-        CompanyEntity companyEntity = new CompanyEntity();
-        companyEntity.setId(companyDto.getId());
-        companyEntity.setName(companyDto.getName());
-        companyEntity.setOfficialContact(companyDto.getOfficialContact());
-        companyEntity.setOfficialEmail(companyDto.getOfficialEmail());
-        companyEntity.setWebsiteUrl(companyDto.getWebsiteUrl());
-        return companyEntity;
-    }
-    public UserDtoResponse getUserById(Long userId) {
-        UserEntity userEntity = userRepository.getById(userId);
-        UserDtoResponse response = convertToUserDtoResponse(userEntity);
-        return response;
-    }
-    private UserDtoResponse convertToUserDtoResponse(UserEntity userEntity) {
-        UserDtoResponse response = new UserDtoResponse();
-        response.setId(userEntity.getId());
-        response.setUserName(userEntity.getUserName());
-        response.setProfilePictureUrl(userEntity.getProfilePictureUrl());
-        response.setAboutMe(userEntity.getAboutMe());
+    public UserDtoResponse addUser(UserDtoRequest request) {
+        UserEntity user=new UserEntity();
+        user.setId(request.getId());
+        user.setUserName(request.getUserName());
+        user.setProfilePictureUrl(request.getProfilePictureUrl());
+        user.setDesignation(request.getDesignation());
+        String workEx = String.join("|", user.getWorkExperiences());
+        user.setWorkExperiences(workEx);
+        user.setAboutMe(request.getAboutMe());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setCompanyId(request.getCompanyId());
 
-        List<CompanyDto> companyDtos = userEntity.getCompanies().stream()
-                .map(this::convertToCompanyDto)
-                .collect(Collectors.toList());
-        response.setCompanies(companyDtos);
-
-        return response;
+        userRepository.save(user);
+        return convertToUserResponse(user);
     }
 
+    private UserDtoResponse convertToUserResponse(UserEntity user) {
+        UserDtoResponse userDtoResponse = new UserDtoResponse();
+        userDtoResponse.setId(user.getId());
+        userDtoResponse.setUserName(user.getUserName());
+        userDtoResponse.setProfilePictureUrl(user.getProfilePictureUrl());
+        userDtoResponse.setDesignation(user.getDesignation());
+        List<String> workExperiences = Arrays.asList(user.getWorkExperiences().split("\\|"));
+        userDtoResponse.setWorkExperiences(workExperiences);
+        userDtoResponse.setAboutMe(user.getAboutMe());
+        userDtoResponse.setEmail(user.getEmail());
+        userDtoResponse.setPhoneNumber(user.getPhoneNumber());
+        userDtoResponse.setCompanyId(user.getCompanyId());
+        return userDtoResponse;
 
-    private CompanyDto convertToCompanyDto(CompanyEntity companyEntity) {
-        CompanyDto companyDto = new CompanyDto();
-        companyDto.setId(companyEntity.getId());
-        companyDto.setName(companyEntity.getName());
-        companyDto.setOfficialContact(companyEntity.getOfficialContact());
-        companyDto.setOfficialEmail(companyEntity.getOfficialEmail());
-        companyDto.setWebsiteUrl(companyEntity.getWebsiteUrl());
-        return companyDto;
+    }
+
+    public UserDtoResponse findUserById(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        return convertToUserResponse(user);
     }
 }
+

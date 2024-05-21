@@ -1,8 +1,10 @@
 package com.example.SupaDataShuriken.controller;
 
+import com.example.SupaDataShuriken.dto.CompanyDtoRequest;
+import com.example.SupaDataShuriken.dto.CompanyDtoResponse;
 import com.example.SupaDataShuriken.dto.UserDtoRequest;
 import com.example.SupaDataShuriken.dto.UserDtoResponse;
-import com.example.SupaDataShuriken.entity.UserEntity;
+import com.example.SupaDataShuriken.exception.ResourceNotFoundException;
 import com.example.SupaDataShuriken.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,18 +15,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private UserService service;
+    @PostMapping("/")
+    public ResponseEntity<UserDtoResponse> addUser(@RequestBody UserDtoRequest request ) {
 
-    @PostMapping("/saveUser")
-    public ResponseEntity<UserEntity> saveUser(@RequestBody UserDtoRequest user) {
-        UserEntity savedUser = userService.saveUser(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        UserDtoResponse response=service.addUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @GetMapping("/getUserById")
-    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable Long userId) {
-        UserDtoResponse response= userService.getUserById(userId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
+
+        try {
+            UserDtoResponse response = service.findUserById(userId);
+            return ResponseEntity.ok(response);
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
-
-
 }

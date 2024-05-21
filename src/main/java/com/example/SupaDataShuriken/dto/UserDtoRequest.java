@@ -4,15 +4,17 @@ import lombok.Data;
 
 import java.util.List;
 
+
 @Data
 public class UserDtoRequest {
     private Long id;
 
     private String userName;
     private String profilePictureUrl;
+    private String designation;
+    private List<String> workExperiences;
     private String aboutMe;
-    private List<CompanyDto> companies;
-    private int connections;
     private String email;
     private String phoneNumber;
+    private Long companyId;
 }

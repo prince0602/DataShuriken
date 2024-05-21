@@ -16,11 +16,10 @@ public class UserEntity {
     private String userName;
     private String profilePictureUrl;
     private String aboutMe;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<CompanyEntity> companies;
-
+    private String designation;
+    private String workExperiences;
     private int connections;
     private String email;
     private String phoneNumber;
+    private Long companyId;
 }
