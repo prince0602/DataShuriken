@@ -22,7 +22,7 @@ public class UserService {
 
 
     public UserDtoResponse addUser(UserDtoRequest request) {
-        UserEntity user=new UserEntity();
+        UserEntity user = new UserEntity();
         user.setId(request.getId());
         user.setUserName(request.getUserName());
         user.setProfilePictureUrl(request.getProfilePictureUrl());

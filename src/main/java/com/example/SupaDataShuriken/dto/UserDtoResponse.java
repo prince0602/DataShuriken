@@ -3,6 +3,7 @@ package com.example.SupaDataShuriken.dto;
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class UserDtoResponse {
     private Long id;
