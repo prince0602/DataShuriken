@@ -47,11 +47,12 @@ public class CompanyController {
 
 
     @PostMapping("/")
-    public ResponseEntity<CompanyDtoResponse> addCompany( @RequestBody CompanyDtoRequest request ) {
+    public ResponseEntity<CompanyDtoResponse> addCompany(@RequestBody CompanyDtoRequest request) {
 
-        CompanyDtoResponse response=companyService.addCompany(request);
+        CompanyDtoResponse response = companyService.addCompany(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @GetMapping("/{companyId}")
     public ResponseEntity<?> getCompanyById(@PathVariable("companyId") Long companyId) {
 

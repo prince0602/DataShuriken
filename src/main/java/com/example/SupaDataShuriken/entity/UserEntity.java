@@ -3,8 +3,6 @@ package com.example.SupaDataShuriken.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 @Entity
 @Table(name = "users")
 @Data

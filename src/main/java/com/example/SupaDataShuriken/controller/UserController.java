@@ -1,5 +1,10 @@
 package com.example.SupaDataShuriken.controller;
 
+import com.example.SupaDataShuriken.dto.UserDtoRequest;
+import com.example.SupaDataShuriken.dto.UserDtoResponse;
+import com.example.SupaDataShuriken.exception.ResourceNotFoundException;
+import com.example.SupaDataShuriken.service.UserService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.SupaDataShuriken.dto.UserDtoRequest;
-import com.example.SupaDataShuriken.dto.UserDtoResponse;
 import com.example.SupaDataShuriken.dto.UsersRequest;
 import com.example.SupaDataShuriken.entity.Users;
-import com.example.SupaDataShuriken.exception.ResourceNotFoundException;
 import com.example.SupaDataShuriken.repository.UsersRepository;
-import com.example.SupaDataShuriken.service.UserService;
 
 import jakarta.validation.Valid;
 
@@ -32,13 +33,14 @@ public class UserController {
 	
     @Autowired
     private UserService service;
-    
-    @PostMapping("/")
-    public ResponseEntity<UserDtoResponse> addUser(@RequestBody UserDtoRequest request ) {
 
-        UserDtoResponse response=service.addUser(request);
+    @PostMapping("/")
+    public ResponseEntity<UserDtoResponse> addUser(@RequestBody UserDtoRequest request) {
+
+        UserDtoResponse response = service.addUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable("userId") Long userId) {
 
